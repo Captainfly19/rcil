@@ -1,23 +1,32 @@
 
-use std::path::Path;
+use std::{path::Path, process::Output};
 
 use anyhow::{self};
 use clap::Parser;
-use rcli::{Opts,SubCommand,process_csv};
+use rcli::{Opts,SubCommand,process_csv,process_genpass};
 
 
 fn main() -> anyhow::Result<()> {
     let opts:Opts = Opts::parse();
     match opts.cmd {
-        SubCommand::CSV(opts) => process_csv(&opts.input, &opts.output)?,
+        SubCommand::CSV(opts) => {
+            let output = if let Some(output) = opts.output {
+                output.clone()
+            } else {
+                format!("output.{}",opts.format)
+            };
+            process_csv(&opts.input, output,opts.format)?;
+        }
+        SubCommand::GenPass(opts) => {
+            // println!("Generate password:{:?}",opts);
+            process_genpass(
+                opts.length,
+                opts.uppercase,
+                opts.lowercase,
+                opts.number,
+                opts.symbol,
+            )?;
+        }
     }
     Ok(())
-}
-
-fn verify_input_file(filename: &str) -> Result<String, &'static str> {
-    if Path::new(filename).exists() {
-        Ok(filename.to_string())  
-    } else {
-        Err("File does not exist")
-    }
 }
