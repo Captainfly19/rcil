@@ -2,13 +2,18 @@
 mod csv;
 mod genpass;
 mod base64;
+mod text;
 
 use std::path::Path;
 
 use self::{csv::CsvOpts,genpass::GenPassOpts};
 use clap::Parser;
 
-pub use self::{csv::OutputFormat,base64::{Base64SubCommand,Base64Format}};
+
+pub use self::{csv::OutputFormat,
+    base64::{Base64SubCommand,Base64Format},
+    text::{TextSignFormat,TextSubCommand},
+};
 
 
 #[derive(Debug,Parser)]
@@ -28,9 +33,11 @@ pub enum SubCommand{
     GenPass(GenPassOpts),
     #[command(subcommand)]
     Base64(Base64SubCommand),
-}//终端输入指令的时候 -- 后面跟的东西
+    #[command(subcommand)]
+    Text(TextSubCommand),
+}//这是接口.终端输入指令的时候 -- 后面跟的东西
 
-fn verify_input_file(filename: &str) -> Result<String, &'static str> {
+fn verify_file(filename: &str) -> Result<String, &'static str> {
     //if input is "-" or file exists
     if filename == "-" || Path::new(filename).exists(){
         Ok(filename.into())
@@ -46,9 +53,9 @@ mod tests{
 
     #[test]
     fn test_verify_input_file(){
-        assert_eq!(verify_input_file("-"),Ok("-".into()));
-        assert_eq!(verify_input_file("*"),Err("File does not exist"));
-        assert_eq!(verify_input_file("Cargo.toml"),Ok("Cargo.toml".into()));
-        assert_eq!(verify_input_file("not-exist"),Err("File does not exist"));
+        assert_eq!(verify_file("-"),Ok("-".into()));
+        assert_eq!(verify_file("*"),Err("File does not exist"));
+        assert_eq!(verify_file("Cargo.toml"),Ok("Cargo.toml".into()));
+        assert_eq!(verify_file("not-exist"),Err("File does not exist"));
     }
 }

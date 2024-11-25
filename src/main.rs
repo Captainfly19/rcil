@@ -8,7 +8,7 @@ use rcli::{
 
 fn main() -> anyhow::Result<()> {
     let opts = Opts::parse();
-    match opts.cmd {
+    match opts.cmd {//match需要涵盖所有的opts
         SubCommand::CSV(opts) => {
             let output = if let Some(output) = opts.output {
                 output.clone()
@@ -32,6 +32,14 @@ fn main() -> anyhow::Result<()> {
             }
             Base64SubCommand::Decode(opts) => {
                 process_decode(&opts.input, opts.format)?;
+            }
+        },
+        SubCommand::Text(subcmd) => match subcmd {
+            rcli::TextSubCommand::Sign(opts) => {
+                println!("{:?}",opts)
+            }
+            rcli::TextSubCommand::Verify(opts) => {
+                println!("{:?}",opts)
             }
         },
     }
