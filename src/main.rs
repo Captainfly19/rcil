@@ -3,13 +3,13 @@ use std::fs;
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 use clap::Parser;
 use rcli::{
-    get_content, get_reader, process_csv, process_decode, process_encode, process_genpass,
-    process_text_key_generate, process_text_sign, process_text_verify, Base64SubCommand, Opts,
-    SubCommand, TextSubCommand,
+    get_content, get_reader, process_csv, process_decode, process_encode, process_genpass, process_http_serve, process_text_key_generate, process_text_sign, process_text_verify, Base64SubCommand, HttpSubCommand, Opts, SubCommand, TextSubCommand
 };
 use zxcvbn::zxcvbn;
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::init();//rust程序就可以用RUST_LOG运行
     let opts = Opts::parse();
     match opts.cmd {
         SubCommand::CSV(opts) => {
@@ -73,6 +73,13 @@ fn main() -> anyhow::Result<()> {
                 }
             }
         },
+        SubCommand::HTTP(cmd) => match cmd{
+            HttpSubCommand::Serve(opts) => {
+                // println!("{:?}",opts); 
+                // println!("Serving at http://0.0.0.0:{}",opts.port)
+                process_http_serve(opts.dir,opts.port).await?;
+            }
+        }
     }
 
     Ok(())

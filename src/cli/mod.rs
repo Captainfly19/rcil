@@ -3,6 +3,7 @@ mod csv;
 mod genpass;
 mod base64;
 mod text;
+mod http;
 
 use std::path::{Path, PathBuf};
 
@@ -13,6 +14,7 @@ use clap::Parser;
 pub use self::{csv::OutputFormat,
     base64::{Base64SubCommand,Base64Format},
     text::{TextSignFormat,TextSubCommand},
+    http::HttpSubCommand,
 };
 
 
@@ -35,6 +37,8 @@ pub enum SubCommand{
     Base64(Base64SubCommand),
     #[command(subcommand)]
     Text(TextSubCommand),
+    #[command(subcommand)]
+    HTTP(HttpSubCommand),
 }//这是接口.终端输入指令的时候 -- 后面跟的东西
 
 fn verify_file(filename: &str) -> Result<String, &'static str> {
