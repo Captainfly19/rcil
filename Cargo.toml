@@ -25,4 +25,5 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 zxcvbn = "3.1.0"
 tokio = { version = "1", features = ["full"] }
 axum = { version = "0.7.9", features = ["http2", "query", "tracing"] }
+tower-http = { version = "0.6.2", features = ["full"] }
 # toml = "0.8.19"
